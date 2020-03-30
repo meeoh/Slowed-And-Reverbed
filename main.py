@@ -49,7 +49,7 @@ for submission in reddit.subreddit('hiphopheads').stream.submissions():
       videoclip = VideoFileClip(video_output_path).loop(duration=soundtrack.duration)
 
       videoclip.audio = soundtrack
-      videoclip.write_videofile(download_dir + '/' + unique_id + '/' + video_title + ' - Slowed And Reverbed.mp4')
+      videoclip.write_videofile(download_dir + '/' + unique_id + '/' + video_title + ' - Slowed And Reverbed.mp4', codec='mpeg4', audio_bitrate="320k")
       youtube_title = video_title + ' - Slowed And Reverbed'
 
       os.remove(audio_output_path)

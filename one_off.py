@@ -14,7 +14,7 @@ soundtrack = AudioFileClip(audio_output_path)
 videoclip = VideoFileClip(video_output_path).loop(duration=soundtrack.duration)
 
 videoclip.audio = soundtrack
-videoclip.write_videofile(filename.split('.mp3')[0] + ' - Slowed And Reverbed.mp4')
+videoclip.write_videofile(filename.split('.mp3')[0] + ' - Slowed And Reverbed.mp4', codec='mpeg4', audio_bitrate="320k")
 
 os.remove(audio_output_path)
 os.remove(video_output_path)
