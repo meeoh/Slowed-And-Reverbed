@@ -14,6 +14,8 @@ reddit = praw.Reddit(
 
 download_dir = os.path.abspath('downloads')
 
+# am = AudioManipulator('december.mp3')
+# am.slow_and_reverb(output_path='december_slowed_reverbed.wav')
 
 for submission in reddit.subreddit('hiphopheads').stream.submissions():
   # if its a FRESH post and on youtube, download it
