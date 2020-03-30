@@ -2,3 +2,5 @@ youtube-dl
 praw
 pydub
 pysndfx
+requests
+moviepy

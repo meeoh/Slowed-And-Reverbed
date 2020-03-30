@@ -7,6 +7,7 @@ import uuid
 class AudioManipulator:
   def __init__(self, sound_path):
     self.sound = AudioSegment.from_file(sound_path)
+    self.sound_path = sound_path
 
   def __pitch_change(self, octaves):
     sound = self.sound
@@ -25,23 +26,23 @@ class AudioManipulator:
     # know how to play audio at standard frame rate (like 44.1k)
     self.sound = sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)
 
-  def slow_and_reverb(self, path=None, octaves=-0.05, speed=0.9):
-    self.slow(octaves, speed)
-    self.reverb(path)
+  def slow_and_reverb(self, output_path=None, octaves=-0.05, speed=0.9):
+    self.slow(output_path, octaves, speed)
+    self.reverb(output_path)
 
-  def slow(self, octaves=-0.05, speed=0.9):
+  def slow(self, path, octaves=-0.05, speed=0.9):
     self.__speed_change(speed)
     self.__pitch_change(octaves)
-    self.sound.export('downloads/speed_and_pitch.wav', format="wav")
+    self.sound.export(path.replace('.wav', '-temp.wav'), format="wav")
 
   def reverb(self, path):
+    infile = path.replace('.wav', '-temp.wav')
+    # This library doesnt like spaces in file names, so replace all spaces with '~+', when we upload to youtube make sure we replace all groups of '~+' with a space
+    outfile = path
+
     fx = (
       AudioEffectsChain()
       .reverb()
     )
-    infile = 'downloads/speed_and_pitch.wav'
-    outfile = 'downloads/final.wav'
-    print("FINAL PATH IS " + outfile)
-    # Apply phaser and reverb directly to an audio file.
     fx(infile, outfile)
-    os.remove('downloads/speed_and_pitch.wav')
+    os.remove(infile)
