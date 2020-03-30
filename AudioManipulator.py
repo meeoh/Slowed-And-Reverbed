@@ -5,9 +5,8 @@ from pysndfx import AudioEffectsChain
 import uuid
 
 class AudioManipulator:
-  def __init__(self, sound_path, download_path):
+  def __init__(self, sound_path):
     self.sound = AudioSegment.from_file(sound_path)
-    self.download_path = download_path
 
   def __pitch_change(self, octaves):
     sound = self.sound
@@ -26,7 +25,7 @@ class AudioManipulator:
     # know how to play audio at standard frame rate (like 44.1k)
     self.sound = sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)
 
-  def slow_and_reverb(self, path='downloads/final.wav', octaves=-0.05, speed=0.9):
+  def slow_and_reverb(self, path=None, octaves=-0.05, speed=0.9):
     self.slow(octaves, speed)
     self.reverb(path)
 
@@ -41,11 +40,8 @@ class AudioManipulator:
       .reverb()
     )
     infile = 'downloads/speed_and_pitch.wav'
-    outfile = path
+    outfile = 'downloads/final.wav'
+    print("FINAL PATH IS " + outfile)
     # Apply phaser and reverb directly to an audio file.
     fx(infile, outfile)
-    os.remove("downloads/speed_and_pitch.wav")
-
-
-# am = AudioManipulator('./empty.mp3')
-# am.slow_and_reverb()
+    os.remove('downloads/speed_and_pitch.wav')

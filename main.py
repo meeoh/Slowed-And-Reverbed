@@ -10,7 +10,6 @@ reddit = praw.Reddit(
 )
 
 download_dir = os.path.abspath('downloads')
-print(download_dir)
 ydl_opts = {
   'format': 'bestaudio/best',
   'postprocessors': [{
@@ -18,7 +17,7 @@ ydl_opts = {
       'preferredcodec': 'mp3',
       'preferredquality': '192',
   }],
-  'outtmpl': download_dir + '\%(title)s.%(ext)s'
+  'outtmpl': download_dir + '/%(title)s.%(ext)s'
 }
 
 
@@ -30,6 +29,6 @@ for submission in reddit.subreddit('hiphopheads').stream.submissions():
       info = ydl.extract_info(submission.url, download=True)
       filename = ydl.prepare_filename(info).replace('.webm', '.mp3')
       am = AudioManipulator(filename)
-      am.slow_and_reverb()
+      am.slow_and_reverb(filename.replace('.mp3', '.wav'))
       os.remove(filename)
       break
