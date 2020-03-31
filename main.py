@@ -2,9 +2,21 @@ import praw
 import youtube_dl
 import os
 import uuid
-from AudioManipulator import AudioManipulator
+import json
+from AudioManipulator import slow_and_reverb
 from Giphy import download_gif
 from moviepy.editor import (VideoFileClip, AudioFileClip)
+
+# Use TinyDB
+# def mark_as_processed(post_id, title):
+#   with open('processed.json', 'r+', encoding='utf-8') as f:
+#     data = json.loads(f.read())
+#     # print(data)
+#     # data[post_id] = title
+#     # f.write(json.dumps(data))
+
+# mark_as_processed(1, "test")
+
 
 reddit = praw.Reddit(
   client_id='_4C0vS7OcJbrDw',
@@ -14,10 +26,12 @@ reddit = praw.Reddit(
 
 download_dir = os.path.abspath('downloads')
 
-for submission in reddit.subreddit('hiphopheads').stream.submissions():
+
+for submission in reddit.subreddit('hiphopheads').hot():
   # if its a FRESH post and on youtube, download it
   if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower()):
-    print(submission.title, submission.url)
+    print(submission.title, submission.url, submission.id)
+    continue
     unique_id = str(uuid.uuid1())
     filename_temp = download_dir + '/' + unique_id + '.mp3'
     ydl_opts = {
@@ -35,12 +49,10 @@ for submission in reddit.subreddit('hiphopheads').stream.submissions():
 
       os.mkdir(download_dir + '/' + unique_id )
       filename = download_dir + '/' + unique_id  + '/' + unique_id + '.mp3'
-
       os.rename(filename_temp, filename)
 
-      am = AudioManipulator(filename)
       audio_output_path = filename.replace('.mp3', '-manipulated.wav')
-      am.slow_and_reverb(output_path=audio_output_path)
+      slow_and_reverb(input_path=filename, output_path=audio_output_path)
       os.remove(filename)
 
       video_output_path = filename.replace('.mp3', '.gif')
@@ -54,5 +66,7 @@ for submission in reddit.subreddit('hiphopheads').stream.submissions():
 
       os.remove(audio_output_path)
       os.remove(video_output_path)
+
+      # mark_as_processed(submission.id, submission.title)
 
       break
