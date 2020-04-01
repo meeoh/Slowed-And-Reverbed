@@ -3,20 +3,40 @@ import youtube_dl
 import os
 import uuid
 import json
+import pytz
 from AudioManipulator import slow_and_reverb
 from Giphy import download_gif
 from moviepy.editor import (VideoFileClip, AudioFileClip)
+from datetime import datetime
 
-# Use TinyDB
-# def mark_as_processed(post_id, title):
-#   with open('processed.json', 'r+', encoding='utf-8') as f:
-#     data = json.loads(f.read())
-#     # print(data)
-#     # data[post_id] = title
-#     # f.write(json.dumps(data))
+def remove_processed(submissions):
+  new_submissions = []
+  with open("processed.json", "r+") as file:
+    processed_submissions = json.load(file)
+    new_submissions = [submission for submission in submissions if submission.id not in processed_submissions]
+  return new_submissions
 
-# mark_as_processed(1, "test")
+def mark_as_processed(submissions):
+  with open("processed.json", "r+") as file:
+    data = json.load(file)
+    submission_ids = map(lambda x: x.id, submissions)
+    keys_to_pop = []
+    for (k, v) in data.items():
+      if k not in submission_ids:
+        keys_to_pop.append(k)
+    for k in keys_to_pop:
+      data.pop(k, None)
 
+    tz = pytz.timezone('America/New_York')
+    today = datetime.now(tz)
+    for submission in submissions:
+      data[submission.id] = {
+        'title': submission.title,
+        'date': str(today)
+      }
+    file.seek(0)
+    file.truncate()
+    json.dump(data, file)
 
 reddit = praw.Reddit(
   client_id='_4C0vS7OcJbrDw',
@@ -25,12 +45,14 @@ reddit = praw.Reddit(
 )
 
 download_dir = os.path.abspath('downloads')
+submissions = remove_processed(reddit.subreddit('hiphopheads').hot())
+processed_submissions = []
 
-
-for submission in reddit.subreddit('hiphopheads').hot():
+for submission in submissions:
   # if its a FRESH post and on youtube, download it
   if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower()):
     print(submission.title, submission.url, submission.id)
+    processed_submissions.append(submission)
     continue
     unique_id = str(uuid.uuid1())
     filename_temp = download_dir + '/' + unique_id + '.mp3'
@@ -66,7 +88,7 @@ for submission in reddit.subreddit('hiphopheads').hot():
 
       os.remove(audio_output_path)
       os.remove(video_output_path)
-
-      # mark_as_processed(submission.id, submission.title)
-
+      processed_submissions.append(submission)
       break
+
+mark_as_processed(processed_submissions)
