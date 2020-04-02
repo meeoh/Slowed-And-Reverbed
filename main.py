@@ -51,7 +51,7 @@ processed_submissions = []
 
 for submission in submissions:
   # if its a FRESH post and on youtube, download it
-  if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower() and 'video' not in submission.title.lower()):
+  if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower() and 'video' not in submission.title.lower() and 'cypher' not in submission.title.lower()):
     print(submission.title, submission.url, submission.id)
     unique_id = str(uuid.uuid1())
     filename_temp = download_dir + '/' + unique_id + '.mp3'
