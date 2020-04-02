@@ -8,6 +8,7 @@ from AudioManipulator import slow_and_reverb
 from Giphy import download_gif
 from moviepy.editor import (VideoFileClip, AudioFileClip)
 from datetime import datetime
+from Youtube import upload_video
 
 def remove_processed(submissions):
   new_submissions = []
@@ -50,10 +51,8 @@ processed_submissions = []
 
 for submission in submissions:
   # if its a FRESH post and on youtube, download it
-  if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower()):
+  if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower() and 'video' not in submission.title.lower()):
     print(submission.title, submission.url, submission.id)
-    processed_submissions.append(submission)
-    continue
     unique_id = str(uuid.uuid1())
     filename_temp = download_dir + '/' + unique_id + '.mp3'
     ydl_opts = {
@@ -74,21 +73,35 @@ for submission in submissions:
       os.rename(filename_temp, filename)
 
       audio_output_path = filename.replace('.mp3', '-manipulated.wav')
+      print("SLOWING AND REVERBING")
       slow_and_reverb(input_path=filename, output_path=audio_output_path)
       os.remove(filename)
+      print("DONE SLOWING AND REVERBING")
 
+      print("MAKING VIDEO")
       video_output_path = filename.replace('.mp3', '.gif')
       download_gif(video_output_path)
       soundtrack = AudioFileClip(audio_output_path)
       videoclip = VideoFileClip(video_output_path).loop(duration=soundtrack.duration)
 
+      final_path = download_dir + '/' + unique_id + '/' + video_title + ' - Slowed And Reverbed.mp4'
       videoclip.audio = soundtrack
-      videoclip.write_videofile(download_dir + '/' + unique_id + '/' + video_title + ' - Slowed And Reverbed.mp4', codec='mpeg4', audio_bitrate="320k")
+      videoclip.write_videofile(final_path, codec='mpeg4', audio_bitrate="320k")
+      print("DONE MAKING VIDEO")
       youtube_title = video_title + ' - Slowed And Reverbed'
 
       os.remove(audio_output_path)
       os.remove(video_output_path)
       processed_submissions.append(submission)
+
+      upload_video({
+        'file': final_path,
+        'title': 'test title',
+        'description': 'description',
+        'category': '10',
+        'keywords': '',
+        'privacyStatus': 'private'
+      })
       break
 
 mark_as_processed(processed_submissions)

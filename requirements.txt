@@ -4,3 +4,7 @@ pydub
 pysndfx
 requests
 moviepy
+pytz
+google-api-python-client
+google_auth_oauthlib
+oauth2client
