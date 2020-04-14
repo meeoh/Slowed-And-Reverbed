@@ -4,3 +4,4 @@ __pycache__/
 processed.json
 client_secret.json
 client_secrets.json
+.env

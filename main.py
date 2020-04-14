@@ -8,7 +8,10 @@ from AudioManipulator import slow_and_reverb
 from Giphy import download_gif
 from moviepy.editor import (VideoFileClip, AudioFileClip)
 from datetime import datetime
-from Youtube import upload_video
+from Youtube import upload
+
+from dotenv import load_dotenv
+load_dotenv()
 
 def remove_processed(submissions):
   new_submissions = []
@@ -40,9 +43,9 @@ def mark_as_processed(submissions):
     json.dump(data, file)
 
 reddit = praw.Reddit(
-  client_id='_4C0vS7OcJbrDw',
-  client_secret='jCFBG9NgScpF7A12iiWS1cmf1zA',
-  user_agent='my user agent'
+  client_id=os.getenv('REDDIT_CLIENT_ID'),
+  client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+  user_agent='temp val'
 )
 
 download_dir = os.path.abspath('downloads')
@@ -94,14 +97,17 @@ for submission in submissions:
       os.remove(video_output_path)
       processed_submissions.append(submission)
 
-      upload_video({
-        'file': final_path,
-        'title': 'test title',
-        'description': 'description',
-        'category': '10',
-        'keywords': '',
-        'privacyStatus': 'private'
-      })
+      keywords = youtube_title.split(' ').extend(['slowed', 'reverbed'])
+      options = {
+        'snippet': {
+          'title': youtube_title,
+          'description': '😈',
+          'categoryId': '10',
+          'tags': keywords
+        }
+      }
+
+      upload(path=final_path, options=options)
       break
 
 mark_as_processed(processed_submissions)
