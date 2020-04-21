@@ -24,12 +24,14 @@ def mark_as_processed(submissions):
   with open("processed.json", "r+") as file:
     data = json.load(file)
     submission_ids = map(lambda x: x.id, submissions)
-    keys_to_pop = []
-    for (k, v) in data.items():
-      if k not in submission_ids:
-        keys_to_pop.append(k)
-    for k in keys_to_pop:
-      data.pop(k, None)
+
+    # Method to remove old items, if its in the file and not back in the reddit posts, remove it from the file
+    # keys_to_pop = []
+    # for (k, v) in data.items():
+    #   if k not in submission_ids:
+    #     keys_to_pop.append(k)
+    # for k in keys_to_pop:
+    #   data.pop(k, None)
 
     tz = pytz.timezone('America/New_York')
     today = datetime.now(tz)
@@ -49,13 +51,20 @@ reddit = praw.Reddit(
 )
 
 download_dir = os.path.abspath('downloads')
-submissions = remove_processed(reddit.subreddit('hiphopheads').hot())
+# submissions = remove_processed(reddit.subreddit('hiphopheads').hot())
+submissions = remove_processed(reddit.subreddit('hiphopheads').top('week'))
 processed_submissions = []
 
 for submission in submissions:
-  # if its a FRESH post and on youtube, download it
-  if('fresh' in submission.title.lower() and 'youtube' in submission.url.lower() and 'video' not in submission.title.lower() and 'cypher' not in submission.title.lower()):
-    print(submission.title, submission.url, submission.id)
+  if(
+    'fresh' in submission.title.lower() and
+    'youtube' in submission.url.lower() and
+    'video' not in submission.title.lower() and
+    'cypher' not in submission.title.lower()
+  ):
+    print(submission.title, submission.url, submission.id, submission.score)
+    if submission.score < 100: continue
+    # print(submission.title, submission.url, submission.id)
     unique_id = str(uuid.uuid1())
     filename_temp = download_dir + '/' + unique_id + '.mp3'
     ydl_opts = {
@@ -108,6 +117,6 @@ for submission in submissions:
       }
 
       upload(path=final_path, options=options)
-      break
+      # break
 
 mark_as_processed(processed_submissions)
