@@ -60,11 +60,10 @@ for submission in submissions:
     'fresh' in submission.title.lower() and
     'youtube' in submission.url.lower() and
     'video' not in submission.title.lower() and
-    'cypher' not in submission.title.lower()
+    'cypher' not in submission.title.lower() and
+    submission.score > 100
   ):
     print(submission.title, submission.url, submission.id, submission.score)
-    if submission.score < 100: continue
-    # print(submission.title, submission.url, submission.id)
     unique_id = str(uuid.uuid1())
     filename_temp = download_dir + '/' + unique_id + '.mp3'
     ydl_opts = {
