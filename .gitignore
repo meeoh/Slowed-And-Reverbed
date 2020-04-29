@@ -7,3 +7,4 @@ client_secrets.json
 .env
 token.json
 *.pyc
+__pycache__/
