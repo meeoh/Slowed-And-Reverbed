@@ -103,7 +103,6 @@ for submission in submissions:
 
       os.remove(audio_output_path)
       os.remove(video_output_path)
-      processed_submissions.append(submission)
 
       keywords = youtube_title.split(' ').extend(['slowed', 'reverbed'])
       options = {
@@ -115,7 +114,12 @@ for submission in submissions:
         }
       }
 
-      upload(path=final_path, options=options)
+      try:
+        upload(path=final_path, options=options)
+        processed_submissions.append(submission)
+      except:
+        print("Could not upload")
+
       # break
 
 mark_as_processed(processed_submissions)
