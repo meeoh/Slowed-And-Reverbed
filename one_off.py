@@ -9,9 +9,9 @@ load_dotenv()
 
 # input file
 
-filename = 'show.mp3'
-youtube_url = 'https://www.youtube.com/watch?v=0jz0GAFNNIo'
-youtube_title = 'Will I See You At The Show Tonight' + ' - Slowed And Reverbed'
+filename = ''
+youtube_url = 'https://www.youtube.com/watch?v=jnKYWFB_Bk0'
+youtube_title = 'ODIE - North Face' + ' - Slowed And Reverbed'
 description = '😈'
 
 if(filename and youtube_url):
@@ -30,7 +30,7 @@ elif(youtube_url):
   }
   with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     info = ydl.extract_info(youtube_url, download=True)
-    video_title = info.get('title', None)
+    youtube_title = info.get('title', None) + ' - Slowed And Reverbed'
 
 audio_output_path = filename.replace('.mp3', '-manipulated.wav')
 print("SLOWING AND REVERBING")
@@ -68,4 +68,4 @@ options = {
   }
 }
 
-# upload(path=final_path, options=options)
+upload(path=final_path, options=options)
