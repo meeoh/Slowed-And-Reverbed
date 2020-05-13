@@ -104,7 +104,7 @@ for submission in submissions:
       os.remove(audio_output_path)
       os.remove(video_output_path)
 
-      keywords = youtube_title.split(' ').extend(['slowed', 'reverbed'])
+      keywords = youtube_title.split(' ') + ['slowed', 'reverbed']
       options = {
         'snippet': {
           'title': youtube_title,
