@@ -60,5 +60,4 @@ def upload(path, options):
       media_body=MediaFileUpload(path)
     )
     response = request.execute()
-
-    print(response)
+    return response
