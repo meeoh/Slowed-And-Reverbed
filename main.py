@@ -47,6 +47,8 @@ def mark_as_processed(submissions):
 reddit = praw.Reddit(
   client_id=os.getenv('REDDIT_CLIENT_ID'),
   client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+  username=os.getENV('REDDIT_USERNAME'),
+  password=os.getENV('REDDIT_PASSWORD'),
   user_agent='temp val'
 )
 
@@ -115,7 +117,9 @@ for submission in submissions:
       }
 
       try:
-        upload(path=final_path, options=options)
+        result = upload(path=final_path, options=options)
+        youtube_url = f'https://youtube.com/watch?v=${result.id}'
+        submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
         processed_submissions.append(submission)
       except:
         print("Could not upload")
