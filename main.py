@@ -67,7 +67,8 @@ for submission in submissions:
     'youtube' in submission.url.lower() and
     'video' not in submission.title.lower() and
     'cypher' not in submission.title.lower() and
-    submission.score > 100
+		'list' not in submission.url.lower() and
+    submission.score > 100 
   ):
     print(submission.title, submission.url, submission.id, submission.score)
     unique_id = str(uuid.uuid1())
@@ -131,9 +132,9 @@ for submission in submissions:
         except Exception as e:
           print("Could not upload")
         # break
-      except Exception as e:
-        print("Could not download youtube video")
-        print(e)
+    except Exception as e:
+      print("Could not download youtube video")
+      print(e)
 
 mark_as_processed(processed_submissions)
 
