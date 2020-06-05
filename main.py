@@ -81,54 +81,59 @@ for submission in submissions:
       }],
       'outtmpl': filename_temp
     }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-      info = ydl.extract_info(submission.url, download=True)
-      video_title = info.get('title', None)
+    try:
 
-      os.mkdir(download_dir + '/' + unique_id )
-      filename = download_dir + '/' + unique_id  + '/' + unique_id + '.mp3'
-      os.rename(filename_temp, filename)
+      with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(submission.url, download=True)
+        video_title = info.get('title', None)
 
-      audio_output_path = filename.replace('.mp3', '-manipulated.wav')
-      print("SLOWING AND REVERBING")
-      slow_and_reverb(input_path=filename, output_path=audio_output_path)
-      os.remove(filename)
-      print("DONE SLOWING AND REVERBING")
+        os.mkdir(download_dir + '/' + unique_id )
+        filename = download_dir + '/' + unique_id  + '/' + unique_id + '.mp3'
+        os.rename(filename_temp, filename)
 
-      print("MAKING VIDEO")
-      video_output_path = filename.replace('.mp3', '.gif')
-      download_gif(video_output_path)
-      soundtrack = AudioFileClip(audio_output_path)
-      videoclip = VideoFileClip(video_output_path).loop(duration=soundtrack.duration)
+        audio_output_path = filename.replace('.mp3', '-manipulated.wav')
+        print("SLOWING AND REVERBING")
+        slow_and_reverb(input_path=filename, output_path=audio_output_path)
+        os.remove(filename)
+        print("DONE SLOWING AND REVERBING")
 
-      final_path = download_dir + '/' + unique_id + '/' + video_title + ' - Slowed And Reverbed.mp4'
-      videoclip.audio = soundtrack
-      videoclip.write_videofile(final_path, codec='mpeg4', audio_bitrate="320k")
-      print("DONE MAKING VIDEO")
-      youtube_title = video_title + ' - Slowed And Reverbed'
+        print("MAKING VIDEO")
+        video_output_path = filename.replace('.mp3', '.gif')
+        download_gif(video_output_path)
+        soundtrack = AudioFileClip(audio_output_path)
+        videoclip = VideoFileClip(video_output_path).loop(duration=soundtrack.duration)
 
-      os.remove(audio_output_path)
-      os.remove(video_output_path)
+        final_path = download_dir + '/' + unique_id + '/' + video_title + ' - Slowed And Reverbed.mp4'
+        videoclip.audio = soundtrack
+        videoclip.write_videofile(final_path, codec='mpeg4', audio_bitrate="320k")
+        print("DONE MAKING VIDEO")
+        youtube_title = video_title + ' - Slowed And Reverbed'
 
-      keywords = youtube_title.split(' ') + ['slowed', 'reverbed']
-      options = {
-        'snippet': {
-          'title': removeSpecialChars(youtube_title),
-          'description': '😈',
-          'categoryId': '10',
-          'tags': keywords
+        os.remove(audio_output_path)
+        os.remove(video_output_path)
+
+        keywords = youtube_title.split(' ') + ['slowed', 'reverbed']
+        options = {
+          'snippet': {
+            'title': removeSpecialChars(youtube_title),
+            'description': '😈',
+            'categoryId': '10',
+            'tags': keywords
+          }
         }
-      }
 
-      try:
-        result = upload(path=final_path, options=options)
-        id = result['id']
-        youtube_url = f'https://youtube.com/watch?v=${id}'
-        submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
-        processed_submissions.append(submission)
+        try:
+          result = upload(path=final_path, options=options)
+          id = result['id']
+          youtube_url = f'https://youtube.com/watch?v=${id}'
+          submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
+          processed_submissions.append(submission)
+        except Exception as e:
+          print("Could not upload")
+        # break
       except Exception as e:
-        print("Could not upload")
-      # break
+        print("Could not download youtube video")
+        print(e)
 
 mark_as_processed(processed_submissions)
 
