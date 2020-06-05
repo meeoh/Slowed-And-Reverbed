@@ -122,10 +122,13 @@ for submission in submissions:
 
       try:
         result = upload(path=final_path, options=options)
-        youtube_url = f'https://youtube.com/watch?v=${result.id}'
+        id = result['id']
+        youtube_url = f'https://youtube.com/watch?v=${id}'
         submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
         processed_submissions.append(submission)
-      except:
+      except Exception as e:
         print("Could not upload")
-        #break
+      # break
+
 mark_as_processed(processed_submissions)
+
