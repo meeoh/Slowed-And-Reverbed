@@ -4,6 +4,7 @@ import os
 import uuid
 import json
 import pytz
+import re
 from AudioManipulator import slow_and_reverb
 from Giphy import download_gif
 from moviepy.editor import (VideoFileClip, AudioFileClip)
@@ -12,6 +13,9 @@ from Youtube import upload
 
 from dotenv import load_dotenv
 load_dotenv()
+
+def removeSpecialChars(input):
+	return re.sub(r'\W+', '', input)
 
 def remove_processed(submissions):
   new_submissions = []
@@ -37,7 +41,7 @@ def mark_as_processed(submissions):
     today = datetime.now(tz)
     for submission in submissions:
       data[submission.id] = {
-        'title': submission.title,
+        'title': removeSpecialChars(submission.title),
         'date': str(today)
       }
     file.seek(0)
@@ -109,7 +113,7 @@ for submission in submissions:
       keywords = youtube_title.split(' ') + ['slowed', 'reverbed']
       options = {
         'snippet': {
-          'title': youtube_title,
+          'title': removeSpecialChars(youtube_title),
           'description': '😈',
           'categoryId': '10',
           'tags': keywords
@@ -123,7 +127,5 @@ for submission in submissions:
         processed_submissions.append(submission)
       except:
         print("Could not upload")
-
-      # break
-
+        #break
 mark_as_processed(processed_submissions)
