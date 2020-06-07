@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def removeSpecialChars(input):
-	return re.sub(r'\W+', '', input)
+	return re.sub(r'([^\s\w]|_)+', '', input)
 
 def remove_processed(submissions):
   new_submissions = []
