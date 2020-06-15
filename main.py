@@ -128,13 +128,14 @@ for submission in submissions:
           id = result['id']
           youtube_url = f'https://youtube.com/watch?v=${id}'
           try:
-            submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
+            submission.reply(f'[Slowed And Reverbed Version]({youtube_url})')
           except Exception as e:
             print("Could not reply to thread")
             print(e)
           processed_submissions.append(submission)
         except Exception as e:
           print("Could not upload")
+          print(e)
         # break
     except Exception as e:
       print("Could not download youtube video")
