@@ -68,7 +68,7 @@ for submission in submissions:
     'video' not in submission.title.lower() and
     'cypher' not in submission.title.lower() and
 		'list' not in submission.url.lower() and
-    submission.score > 100 
+    submission.score > 100
   ):
     print(submission.title, submission.url, submission.id, submission.score)
     unique_id = str(uuid.uuid1())
@@ -127,7 +127,11 @@ for submission in submissions:
           result = upload(path=final_path, options=options)
           id = result['id']
           youtube_url = f'https://youtube.com/watch?v=${id}'
-          submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
+          try:
+            submisson.reply(f'[Slowed And Reverbed Version]({youtube_url})')
+          except Exception as e:
+            print("Could not reply to thread")
+            print(e)
           processed_submissions.append(submission)
         except Exception as e:
           print("Could not upload")
@@ -137,4 +141,3 @@ for submission in submissions:
       print(e)
 
 mark_as_processed(processed_submissions)
-
