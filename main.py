@@ -64,7 +64,7 @@ processed_submissions = []
 for submission in submissions:
   if(
     'fresh' in submission.title.lower() and
-    'youtube' in submission.url.lower() and
+    ('youtube' in submission.url.lower() or 'youtu.be' in submission.url.lower()) and
     'video' not in submission.title.lower() and
     'cypher' not in submission.title.lower() and
 		'list' not in submission.url.lower() and
