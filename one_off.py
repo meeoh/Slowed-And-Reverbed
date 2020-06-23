@@ -10,7 +10,7 @@ load_dotenv()
 # input file
 
 filename = ''
-youtube_url = 'https://www.youtube.com/watch?v=jnKYWFB_Bk0'
+youtube_url = 'https://www.youtube.com/watch?v=PR-duMh19FY'
 youtube_title = 'ODIE - North Face' + ' - Slowed And Reverbed'
 description = '😈'
 
@@ -68,4 +68,5 @@ options = {
   }
 }
 
-upload(path=final_path, options=options)
+res = upload(path=final_path, options=options)
+print(res)
