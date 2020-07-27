@@ -1,3 +1,4 @@
+import praw
 import os
 import youtube_dl
 from AudioManipulator import slow_and_reverb
@@ -7,11 +8,17 @@ from Youtube import upload
 from dotenv import load_dotenv
 load_dotenv()
 
-# input file
+reddit = praw.Reddit(
+  client_id=os.getenv('REDDIT_CLIENT_ID'),
+  client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+  username=os.getenv('REDDIT_USERNAME'),
+  password=os.getenv('REDDIT_PASSWORD'),
+  user_agent='test bot'
+)
 
 filename = ''
-youtube_url = 'https://www.youtube.com/watch?v=X5D9hJsTUQI'
-youtube_title = 'ODIE - North Face' + ' - Slowed And Reverbed'
+youtube_url = 'https://www.youtube.com/watch?v=O9rQj9vilhI'
+youtube_title = ''
 description = '😈'
 
 if(filename and youtube_url):
@@ -58,7 +65,7 @@ print("DONE MAKING VIDEO")
 os.remove(audio_output_path)
 os.remove(video_output_path)
 
-keywords = youtube_title.split(' ') + ['slowed', 'reverbed']
+keywords = youtube_title.split(' ')
 options = {
   'snippet': {
     'title': youtube_title,
@@ -71,4 +78,20 @@ options = {
 res = upload(path=final_path, options=options)
 video_id = res['id']
 youtube_url = f'https://youtube.com/watch?v={video_id}'
+
+
+reddit = praw.Reddit(
+  client_id=os.getenv('REDDIT_CLIENT_ID'),
+  client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+  username=os.getenv('REDDIT_USERNAME'),
+  password=os.getenv('REDDIT_PASSWORD'),
+  user_agent='temp val'
+)
+
+try:
+  reddit.subreddit("slowedandreverbed").submit(youtube_title, url=youtube_url)
+except Exception as e:
+  print("Could not post to subreddit")
+  print(e)
+
 print(youtube_url)

@@ -113,7 +113,7 @@ for submission in submissions:
         os.remove(audio_output_path)
         os.remove(video_output_path)
 
-        keywords = youtube_title.split(' ') + ['slowed', 'reverbed']
+        keywords = youtube_title.split(' ')
         options = {
           'snippet': {
             'title': removeSpecialChars(youtube_title),
@@ -127,6 +127,13 @@ for submission in submissions:
           result = upload(path=final_path, options=options)
           video_id = result['id']
           youtube_url = f'https://youtube.com/watch?v={video_id}'
+
+          try:
+            reddit.subreddit("slowedandreverbed").submit(youtube_title, url=youtube_url)
+          except Exception as e:
+            print("Could not post to subreddit")
+            print(e)
+
           try:
             submission.reply(f'[Slowed And Reverbed Version]({youtube_url})')
           except Exception as e:
